@@ -28,6 +28,16 @@ def main():
     
     # Leitura dos dados do Excel
     dados = bot_excel.read(caminho_excel).as_list("extrato")[1:]
+            
+    # Mapear os botões de Débito e Crédito
+    btn_Debito = bot.find_app_element(from_parent_window=bank_window, auto_id="radioButton_Debito")
+    btn_Credito = bot.find_app_element(from_parent_window=bank_window, auto_id="radioButton_Credito")
+    # Mapear o campos de valor, data e descrição
+    campo_descricao = bot.find_app_element(from_parent_window=bank_window, auto_id="textBox_Descricao")
+    campo_valor = bot.find_app_element(from_parent_window=bank_window, auto_id="textBox_Valor") 
+    campo_data = bot.find_app_element(from_parent_window=bank_window, auto_id="textBox_Data")   
+    # Mapear o botão de Gravar
+    btn_gravar = bot.find_app_element(from_parent_window=bank_window, auto_id="button_Gravar")
     
     # Filtrar os dados do Excel
     for linha in dados:
@@ -38,34 +48,21 @@ def main():
         # Conversão da data para o formato dd/mm/aaaa
         data = date.strftime(data, "%d/%m/%Y")
 
-        # Mapear o botão de Débito e Crédito
+        # verificar condição se Débito ou Crédito
         if tipo == "Débito":
-            btn_Debito = bot.find_app_element(from_parent_window=bank_window, auto_id="radioButton_Debito")
             btn_Debito.click()
         else:
-            btn_Credito = bot.find_app_element(from_parent_window=bank_window, auto_id="radioButton_Credito")
             btn_Credito.click()
-
-        # Mapear o campos de valor, data e descrição
-        campo_descricao = bot.find_app_element(from_parent_window=bank_window, auto_id="textBox_Descricao")
+        # Preencher os campos de descrição, valor e data
         campo_descricao.set_text(descricao)
-
-        campo_valor = bot.find_app_element(from_parent_window=bank_window, auto_id="textBox_Valor") 
         campo_valor.set_text(str(valor))
-
-        campo_data = bot.find_app_element(from_parent_window=bank_window, auto_id="textBox_Data")   
         campo_data.set_text(data)   
-
-        # Mapear o botão de Gravar
-        btn_gravar = bot.find_app_element(from_parent_window=bank_window, auto_id="button_Gravar")
         btn_gravar.click()
 
-
-
-
-
-        
-
+    # Fechar a aplicação     
+    process = bot.find_app_window(title=title_bank)
+    process.close()
+    
 def not_found(label):
     print(f"Element not found: {label}")
 
